@@ -1,0 +1,21 @@
+Getting data
+
+Wikipedia uses jQuery on tables, meaning the library gets to be already active on the page and it's possible to use it in console scripts.
+
+The next code snippet when run from Firefox console produces simple data description suitable for copying into .csv file.
+
+$('table.sortable').eq(1).find('tbody > tr').has('td:first[colspan!="2"]').each(function(){
+  var dataRow = $(this).find('td');
+  var num = $(dataRow).eq(0).text().trim();
+  var year = $(dataRow).eq(1).text().trim();
+  var capital = $(dataRow).eq(2).text().trim();
+console.log("winter;%s;%s;%s;", num, year, capital);
+})
+
+For summer games page the same code worked ('winter' changed to 'summer' in the last statement, of course).
+
+There were still some 'the games were cancelled' statements, those I removed by hand.
+
+Cities' coordinates are from Wikipedia's links to GeoHack.
+
+In the final dataset also were made replacements of ', ' to ';' so that city and country, and coordinates are separate.

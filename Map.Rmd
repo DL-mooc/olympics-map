@@ -1,0 +1,53 @@
+---
+title: "Olympic capitals map"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(leaflet)
+
+set.seed(13248)
+
+Sys.setlocale(category = "LC_TIME", locale = "C")
+compile_date = as.Date(Sys.time(), tz="PDT");
+
+```
+
+The data obtained from Wikipedia's articles on [Summer](https://en.wikipedia.org/wiki/Summer_Olympic_Games) and [Winter](https://en.wikipedia.org/wiki/Winter_Olympic_Games) Olympic games (as of **`r format(compile_date, "%a, %b %d, %Y")`**).
+
+```{r echo=FALSE, message = FALSE}
+capitals = read.csv2("OlympicCapitals.csv", dec = ".")
+N = nrow(capitals)
+capitals$descr = c(N)
+for (i in 1:N) {
+  capitals[i, "descr"] = 
+    paste(sep = "",
+          "<b>",
+          capitals[i, "Capital"],
+          "</b><br />", 
+          capitals[i, "Numeral"],
+          " ",
+          capitals[i, "Winter.or.summer"],
+          ", ",
+          capitals[i, "Year"])
+}
+capitals$lat = capitals$lat + (rbinom(N, 2, 0.5) - 1) * 0.1
+capitals$lng = capitals$lng + (rbinom(N, 2, 0.5) - 1) * 0.1
+
+pal <- colorFactor(c("green", "navy"), domain = c("winter", "summer"), ordered = TRUE)
+
+m <- leaflet() %>%
+  addTiles() %>% 
+  addCircleMarkers(
+    data = capitals,
+    popup = capitals$descr,
+    color = ~pal(capitals$Winter.or.summer),
+    weight = 1, 
+    clusterOptions = markerClusterOptions(disableClusteringAtZoom = 5)) %>%
+  addLegend("bottomright", pal = pal, values = capitals$Winter.or.summer,
+    opacity = 1
+  )
+m
+```
+
