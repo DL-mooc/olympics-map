@@ -10,7 +10,7 @@ library(leaflet)
 set.seed(13248)
 
 Sys.setlocale(category = "LC_TIME", locale = "C")
-compile_date = as.Date(Sys.time(), tz="PDT");
+compile_date = Sys.time()
 
 ```
 
